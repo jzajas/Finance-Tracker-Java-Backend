@@ -9,7 +9,10 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -34,5 +37,5 @@ public class User {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "created_at")
-    private Date createdAt;
+    private LocalDate createdAt;
 }
