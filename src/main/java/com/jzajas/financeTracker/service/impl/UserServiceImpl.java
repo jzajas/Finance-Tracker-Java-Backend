@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void createUser(UserRegistrationDTO dto) {
+    public UserOutputDTO createUser(UserRegistrationDTO dto) {
         String password = dto.getPassword();
         validateRegistrationCredentials(dto.getUsername(), dto.getEmail(), password);
 
@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             hashedPassword = hashPassword(password);
+            System.out.println(hashedPassword.toString());
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -53,6 +54,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(hashedPassword.toString());
 
         userRepository.save(user);
+
+        return mapper.userToUserDTO(user);
     }
 
     @Override
@@ -91,7 +94,7 @@ public class UserServiceImpl implements UserService {
         byte[] salt = new byte[16];
         random.nextBytes(salt);
 
-        MessageDigest md = MessageDigest.getInstance("SHA_512");
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
         md.update(salt);
 
         return md.digest(password.getBytes(StandardCharsets.UTF_8));

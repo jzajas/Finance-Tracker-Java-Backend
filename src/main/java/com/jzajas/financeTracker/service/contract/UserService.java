@@ -6,7 +6,7 @@ import com.jzajas.financeTracker.entity.User;
 
 public interface UserService {
 
-    void createUser(UserRegistrationDTO dto);
+    UserOutputDTO createUser(UserRegistrationDTO dto);
 
     UserOutputDTO getUser(Long id);
 
