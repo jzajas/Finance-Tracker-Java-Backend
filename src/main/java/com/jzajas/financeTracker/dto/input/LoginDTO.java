@@ -7,15 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class UserRegistrationDTO {
-
-
-    @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters")
-    private String username;
+public class LoginDTO {
 
     @NotBlank(message = "Password is required")
     @Size(min = 6, message = "Password is too short")

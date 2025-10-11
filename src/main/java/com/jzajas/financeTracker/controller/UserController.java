@@ -2,7 +2,6 @@ package com.jzajas.financeTracker.controller;
 
 import com.jzajas.financeTracker.dto.input.UserRegistrationDTO;
 import com.jzajas.financeTracker.dto.output.UserOutputDTO;
-import com.jzajas.financeTracker.entity.User;
 import com.jzajas.financeTracker.service.contract.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +27,7 @@ public class UserController {
         UserOutputDTO user = userService.createUser(dto);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<UserOutputDTO> getUserById(@PathVariable("id") Long id) {

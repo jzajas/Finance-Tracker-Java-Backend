@@ -2,7 +2,6 @@ package com.jzajas.financeTracker.service.contract;
 
 import com.jzajas.financeTracker.dto.input.UserRegistrationDTO;
 import com.jzajas.financeTracker.dto.output.UserOutputDTO;
-import com.jzajas.financeTracker.entity.User;
 
 public interface UserService {
 

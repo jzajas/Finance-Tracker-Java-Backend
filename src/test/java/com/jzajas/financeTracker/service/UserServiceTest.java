@@ -1,6 +1,5 @@
 package com.jzajas.financeTracker.service;
 
-import com.jzajas.financeTracker.UtilCreationMethods;
 import com.jzajas.financeTracker.dto.input.UserRegistrationDTO;
 import com.jzajas.financeTracker.dto.output.UserOutputDTO;
 import com.jzajas.financeTracker.entity.User;
@@ -9,20 +8,16 @@ import com.jzajas.financeTracker.exceptions.InvalidPasswordException;
 import com.jzajas.financeTracker.exceptions.UsernameAlreadyExistsException;
 import com.jzajas.financeTracker.mapper.UserMapper;
 import com.jzajas.financeTracker.repository.UserRepository;
-import com.jzajas.financeTracker.service.contract.UserService;
 import com.jzajas.financeTracker.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.stream.Stream;
 
 import static com.jzajas.financeTracker.UtilCreationMethods.createCustomUser;
