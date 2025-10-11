@@ -14,17 +14,17 @@ public class UtilCreationMethods {
                 1L,
                 "johnny",
                 "johnny.doe@gmail.com",
-                "123",
+                "password1",
                 LocalDate.of(2025, 10, 8)
         );
     }
 
-    public static User createCustomUser(String username, String email) {
+    public static User createCustomUser(String password) {
         return new User(
                 1L,
-                username,
-                email,
-                "123",
+                "johnny",
+                "johnny.doe@gmail.com",
+                password,
                 LocalDate.of(2025, 10, 8)
         );
     }
@@ -32,16 +32,16 @@ public class UtilCreationMethods {
     public static UserRegistrationDTO createDefaultUserRegistrationDTO() {
         return new UserRegistrationDTO(
                 "johnny",
-                "123",
+                "password1",
                 "johnny.doe@gmail.com"
         );
     }
 
-    public static UserRegistrationDTO createCustomUserRegistrationDTO(String username, String email) {
+    public static UserRegistrationDTO createCustomUserRegistrationDTO(String password) {
         return new UserRegistrationDTO(
-                username,
-                "123",
-                email
+                "johnny",
+                password,
+                "johnny.doe@gmail.com"
         );
     }
 
@@ -49,17 +49,17 @@ public class UtilCreationMethods {
         return new UserOutputDTO(
                 "johnny",
                 "johnny.doe@gmail.com",
+                "password1",
                 LocalDate.of(2025, 10, 8)
         );
     }
 
-    public static UserOutputDTO createCustomUserOutputDTO(String username, String email) {
+    public static UserOutputDTO createCustomUserOutputDTO(String password) {
         return new UserOutputDTO(
                 "johnny",
                 "johnny.doe@gmail.com",
+                password,
                 LocalDate.of(2025, 10, 8)
         );
     }
-
-
 }

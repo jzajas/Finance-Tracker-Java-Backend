@@ -26,7 +26,8 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private static final String INCORRECT_PASSWORD_MESSAGE = "Password needs to contain at least one digit";
+    private static final String INCORRECT_PASSWORD_MESSAGE = "Password needs to contain at least one digit and be 7 characters long";
+    private static final int MINIMAL_PASSWORD_LENGTH = 7;
     private final String USER_NOT_FOUND_MESSAGE = "User with id: %d not found";
     private final String ALREADY_EXISTS_MESSAGE = "already exists";
 
@@ -46,13 +47,11 @@ public class UserServiceImpl implements UserService {
 
         try {
             hashedPassword = hashPassword(password);
-            System.out.println(hashedPassword.toString());
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
 
         user.setPassword(hashedPassword.toString());
-
         userRepository.save(user);
 
         return mapper.userToUserDTO(user);
@@ -80,6 +79,7 @@ public class UserServiceImpl implements UserService {
     private void  validateRegistrationCredentials(String username, String email, String password) {
         if(userRepository.existsByUsername(username)) throw new UsernameAlreadyExistsException(username + ALREADY_EXISTS_MESSAGE);
         if(userRepository.existsByEmail(email)) throw new EmailAlreadyExistsException(username + ALREADY_EXISTS_MESSAGE);
+        if (password.length() < MINIMAL_PASSWORD_LENGTH) throw new InvalidPasswordException(INCORRECT_PASSWORD_MESSAGE);
 
         Pattern pattern = Pattern.compile("\\d", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(password);
