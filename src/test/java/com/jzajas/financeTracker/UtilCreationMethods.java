@@ -15,6 +15,7 @@ public class UtilCreationMethods {
                 "johnny",
                 "johnny.doe@gmail.com",
                 "password1",
+                LocalDate.of(2025, 10, 8),
                 LocalDate.of(2025, 10, 8)
         );
     }
@@ -25,6 +26,7 @@ public class UtilCreationMethods {
                 "johnny",
                 "johnny.doe@gmail.com",
                 password,
+                LocalDate.of(2025, 10, 8),
                 LocalDate.of(2025, 10, 8)
         );
     }

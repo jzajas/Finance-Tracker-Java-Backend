@@ -17,8 +17,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
 //                        .requestMatchers("/messages/**").access()
                         .anyRequest().permitAll()
-                )
-                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+                );
+//                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
         return http.build();
     }
 }

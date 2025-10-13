@@ -42,14 +42,15 @@ public class UserServiceImpl implements UserService {
 
         User user = mapper.userDtoToUser(dto);
         user.setCreatedAt(LocalDate.now());
+        user.setUpdatedAt(LocalDate.now());
 
-        byte[] hashedPassword;
+        byte[] hashedPassword = hashPassword(password);
 
-        try {
-            hashedPassword = hashPassword(password);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            hashedPassword = hashPassword(password);
+//        } catch (NoSuchAlgorithmException e) {
+//            throw new RuntimeException(e);
+//        }
 
         user.setPassword(hashedPassword.toString());
         userRepository.save(user);
@@ -67,18 +68,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser() {
+    public UserOutputDTO updateUser(Long id, UserRegistrationDTO dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow( () -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE));
 
+        User updatedUser = userUpdateMapping(user, dto);
+
+        return mapper.userToUserDTO(updatedUser);
     }
 
     @Override
-    public void deleteUser() {
-
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
     }
 
     private void  validateRegistrationCredentials(String username, String email, String password) {
         if(userRepository.existsByUsername(username)) throw new UsernameAlreadyExistsException(username + ALREADY_EXISTS_MESSAGE);
-        if(userRepository.existsByEmail(email)) throw new EmailAlreadyExistsException(username + ALREADY_EXISTS_MESSAGE);
+        if(userRepository.existsByEmail(email)) throw new EmailAlreadyExistsException(email + ALREADY_EXISTS_MESSAGE);
         if (password.length() < MINIMAL_PASSWORD_LENGTH) throw new InvalidPasswordException(INCORRECT_PASSWORD_MESSAGE);
 
         Pattern pattern = Pattern.compile("\\d", Pattern.CASE_INSENSITIVE);
@@ -89,14 +95,32 @@ public class UserServiceImpl implements UserService {
 
 
 //    TODO change algorithm from SHA-512 to BCrypt using Spring Security
-    private byte[] hashPassword(String password) throws NoSuchAlgorithmException {
-        SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[16];
-        random.nextBytes(salt);
+    private byte[] hashPassword(String password) {
+        try {
+            SecureRandom random = new SecureRandom();
+            byte[] salt = new byte[16];
+            random.nextBytes(salt);
 
-        MessageDigest md = MessageDigest.getInstance("SHA-512");
-        md.update(salt);
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            md.update(salt);
 
-        return md.digest(password.getBytes(StandardCharsets.UTF_8));
+            return md.digest(password.getBytes(StandardCharsets.UTF_8));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private User userUpdateMapping(User user, UserRegistrationDTO dto) {
+        byte[] hashedPassword = hashPassword(dto.getPassword());
+
+        return new User(
+                user.getId(),
+                dto.getUsername(),
+                dto.getEmail(),
+                hashedPassword.toString(),
+                user.getCreatedAt(),
+                LocalDate.now()
+        );
     }
 }

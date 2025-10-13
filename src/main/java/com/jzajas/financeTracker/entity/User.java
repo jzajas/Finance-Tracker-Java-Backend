@@ -37,4 +37,8 @@ public class User {
     @Temporal(TemporalType.DATE)
     @Column(name = "created_at")
     private LocalDate createdAt;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "updated_at")
+    private LocalDate updatedAt;
 }
