@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     private static final String INCORRECT_PASSWORD_MESSAGE = "Password needs to contain at least one digit and be 7 characters long";
     private static final int MINIMAL_PASSWORD_LENGTH = 7;
     private final String USER_NOT_FOUND_MESSAGE = "User with id: %d not found";
-    private final String ALREADY_EXISTS_MESSAGE = "already exists";
+    private final String ALREADY_EXISTS_MESSAGE = " already exists";
 
     private UserRepository userRepository;
     private UserMapper mapper;
@@ -72,9 +72,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow( () -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE));
 
+        validateRegistrationCredentials(dto.getUsername(), dto.getEmail(), dto.getPassword());
         User updatedUser = userUpdateMapping(user, dto);
 
-        return mapper.userToUserDTO(updatedUser);
+        User saved = userRepository.save(updatedUser);
+
+        return mapper.userToUserDTO(saved);
     }
 
     @Override
@@ -82,7 +85,7 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-    private void  validateRegistrationCredentials(String username, String email, String password) {
+    private void validateRegistrationCredentials(String username, String email, String password) {
         if(userRepository.existsByUsername(username)) throw new UsernameAlreadyExistsException(username + ALREADY_EXISTS_MESSAGE);
         if(userRepository.existsByEmail(email)) throw new EmailAlreadyExistsException(email + ALREADY_EXISTS_MESSAGE);
         if (password.length() < MINIMAL_PASSWORD_LENGTH) throw new InvalidPasswordException(INCORRECT_PASSWORD_MESSAGE);

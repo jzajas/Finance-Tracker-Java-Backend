@@ -5,6 +5,7 @@ import com.jzajas.financeTracker.dto.output.UserOutputDTO;
 import com.jzajas.financeTracker.entity.User;
 import com.jzajas.financeTracker.exceptions.EmailAlreadyExistsException;
 import com.jzajas.financeTracker.exceptions.InvalidPasswordException;
+import com.jzajas.financeTracker.exceptions.UserNotFoundException;
 import com.jzajas.financeTracker.exceptions.UsernameAlreadyExistsException;
 import com.jzajas.financeTracker.mapper.UserMapper;
 import com.jzajas.financeTracker.repository.UserRepository;
@@ -16,8 +17,11 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.jzajas.financeTracker.UtilCreationMethods.createCustomUser;
@@ -26,8 +30,10 @@ import static com.jzajas.financeTracker.UtilCreationMethods.createCustomUserRegi
 import static com.jzajas.financeTracker.UtilCreationMethods.createDefaultUser;
 import static com.jzajas.financeTracker.UtilCreationMethods.createDefaultUserOutputDTO;
 import static com.jzajas.financeTracker.UtilCreationMethods.createDefaultUserRegistrationDTO;
+import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -63,7 +69,7 @@ public class UserServiceTest {
     public void whenCreateUserCalled_WithValidDTO_PasswordGetsHashedCorrectly(String password, String hash) {
         UserRegistrationDTO inputDto = createCustomUserRegistrationDTO(password);
         UserOutputDTO outputDto = createCustomUserOutputDTO(password);
-        User user = createCustomUser(password);
+        User user = createCustomUser("john", "john@gmail.com", password);
 
         when(mapper.userDtoToUser(inputDto)).thenReturn(user);
         when(mapper.userToUserDTO(user)).thenReturn(outputDto);
@@ -113,6 +119,57 @@ public class UserServiceTest {
         when(userRepository.existsByEmail(anyString())).thenThrow(EmailAlreadyExistsException.class);
 
         assertThrows(EmailAlreadyExistsException.class, () -> userService.createUser(inputDto));
+    }
+
+    @Test
+    public void whenGetUserCalled_withExistingId_userIsReturned() {
+        Long id = 1l;
+        User user = createDefaultUser();
+        UserOutputDTO expected = createDefaultUserOutputDTO();
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(mapper.userToUserDTO(user)).thenReturn(expected);
+        UserOutputDTO actual = userService.getUser(id);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void whenGetUserCalled_withNonExistingId_excetionIsThrown() {
+        Long id = 1l;
+
+        when(userRepository.findById(id)).thenThrow(UserNotFoundException.class);
+
+        assertThrows(UserNotFoundException.class, () -> userService.getUser(id));
+    }
+
+    @Test
+    public void whenUpdateUserCalled_WithCorrectDTO_UserIsUpdated() {
+        Long id = 1l;
+        User user = createDefaultUser();
+        User updatedUser = createCustomUser(
+                "john",
+                "[B@293cde83",
+                "new.password@gmail.com"
+        );
+        UserRegistrationDTO updateDto = createCustomUserRegistrationDTO(
+                "john",
+                "password1234",
+                "new.password@gmail.com"
+        );
+        UserOutputDTO expectedDto = createCustomUserOutputDTO(
+                "john",
+                "[B@293cde83",
+                "new.password@gmail.com"
+        );
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        when(userRepository.save(Mockito.<User>any())).thenReturn(updatedUser);
+        when(mapper.userToUserDTO(updatedUser)).thenReturn(expectedDto);
+
+        UserOutputDTO actual = userService.updateUser(id, updateDto);
+
+        assertEquals(expectedDto, actual);
     }
 
 }

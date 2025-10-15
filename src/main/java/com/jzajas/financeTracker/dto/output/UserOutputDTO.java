@@ -20,4 +20,6 @@ public class UserOutputDTO {
     private String password;
 
     private LocalDate createdAt;
+
+    private LocalDate updatedAt;
 }
